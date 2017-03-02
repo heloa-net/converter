@@ -1,8 +1,25 @@
-import json
+import pprint
 
-#val is imported json
-val = '''
-{
+def convert_fn(old_object):
+  res = {}
+
+  for obj_key, obj_val in old_object.iteritems():
+    print obj_key, obj_val
+    
+    if obj_val and len(obj_val) > 1:
+      or_obj = []
+      for obj_rule in obj_val:
+        new_rule = {}
+        new_rule[obj_key] = {}
+
+        or_obj.append(new_rule)
+      res[obj_key] = { '$or': or_obj }
+    else:
+      res[obj_key] = {}
+
+  return res 
+
+val = {
   "BF": [], 
   "D": [
     ["Side", "eq", "1", "OrdType", "eq", "2"], 
@@ -30,40 +47,4 @@ val = '''
   "U40": [], 
   "8": []
 }
-'''
-
-val2 = '''
-{
-
-}
-'''
-
-old = json.loads(val)
-new = dict();
-if len(old) == 0:
-  print(new)
-else:
-  for key in old:
-    if old[key] == []:
-      new[key] = {}
-    else:
-      # old[key] is a list
-      while len(old[key]) > 0:
-        aux = []
-        item = old[key].pop(0)
-        
-        while len(item):
-          if len(item) % 3 == 0:
-            rule = item[:3]
-            item = item[3:]
-
-            if rule[1] == 'eq':
-              eqRule = {}
-              eqRule.__setitem__(rule[0], rule[2])
-              aux.append(eqRule)
-          else:
-            print('ERROR: One or more rules doesn\'t contain 3 elements')
-      print(aux)
-          # dictee = dict.fromkeys(aux)
-          # print(dictee)
-  # print(new)
+pprint.pprint (convert_fn(val))
