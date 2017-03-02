@@ -46,4 +46,24 @@ else:
   for key in old:
     if old[key] == []:
       new[key] = {}
-  print(new)
+    else:
+      # old[key] is a list
+      while len(old[key]) > 0:
+        aux = []
+        item = old[key].pop(0)
+        
+        while len(item):
+          if len(item) % 3 == 0:
+            rule = item[:3]
+            item = item[3:]
+
+            if rule[1] == 'eq':
+              eqRule = {}
+              eqRule.__setitem__(rule[0], rule[2])
+              aux.append(eqRule)
+          else:
+            print('ERROR: One or more rules doesn\'t contain 3 elements')
+      print(aux)
+          # dictee = dict.fromkeys(aux)
+          # print(dictee)
+  # print(new)
