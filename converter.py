@@ -26,6 +26,11 @@ def convert(old_object):
         rule = decode(obj_rule)
         or_obj.append(rule)
       res[obj_key] = { '$or': or_obj }
+
+    elif obj_val and len(obj_val) == 1:
+      single_rule = obj_val[0]
+      rule = decode(single_rule)
+      res[obj_key] = rule
     else:
       res[obj_key] = {}
 
