@@ -1,4 +1,11 @@
-import json, pprint, sys
+import json
+import pprint
+import sys
+
+"""
+$ python2.7 converter.py <file_with_permissions>
+
+"""
 
 
 def decode(raw_rule):
@@ -43,14 +50,22 @@ def convert(old_object):
     return res
 
 
+def safe_repr(object, context, maxlevels, level):
+    typ = pprint._type(object)
+    if typ is unicode:
+        object = str(object)
+    return pprint._safe_repr(object, context, maxlevels, level)
+
+printer = pprint.PrettyPrinter()
+printer.format = safe_repr
+
+
 def read(permission_list):
-    with open(permission_list) as file:
-        for line in file:
+    with open(permission_list) as f:
+        for line in f:
             json_obj = json.loads(line)
-            pprint.pprint(convert(json_obj))
+            printer.pprint(convert(json_obj))
     return "Finished"
 
-if (sys.argv[1]):
-    read(sys.argv[1])
-else:
-    print "No file passed in args"
+
+read(sys.argv[1])
