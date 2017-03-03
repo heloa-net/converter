@@ -1,4 +1,5 @@
-import pprint
+import json, pprint, sys
+
 
 def decode(raw_rule):
     res = {}
@@ -17,6 +18,7 @@ def decode(raw_rule):
             print "ERROR: Unrecognized operator:", old_rule[1]
 
     return res
+
 
 def convert(old_object):
     res = {}
@@ -40,37 +42,15 @@ def convert(old_object):
 
     return res
 
-json_obj = {
-    "BF": [],
-    "D": [
-        ["Side", "eq", "1", "OrdType", "eq", "2"],
-        ["Side", "eq", "2", "OrdType", "eq", "2"]
-    ],
-    "F": [],
-    "U4": [],
-    "U6": [
-        ["Method", "eq", "bb"],
-        ["Method", "eq", "bradesco"],
-        ["Method", "eq", "ted"],
-        ["Method", "eq", "doc"],
-        ["Method", "eq", "Caixa"]
-    ],
-    "U2": [],
-    "U18": [
-        ["Currency", "eq", "BTC"]
-    ],
-    "U26": [],
-    "U34": [],
-    "U30": [],
-    "U23": [],
-    "U9": [],
-    "U3": [],
-    "U40": [],
-    "8": [],
-    "B2": [],
-    "B8": [
-        ["Verify", "in", [2, 3, 4]]
-    ]
-}
 
-pprint.pprint(convert(json_obj))
+def read(permission_list):
+    with open(permission_list) as file:
+        for line in file:
+            json_obj = json.loads(line)
+            pprint.pprint(convert(json_obj))
+    return "Finished"
+
+if (sys.argv[1]):
+    read(sys.argv[1])
+else:
+    print "No file passed in args"
