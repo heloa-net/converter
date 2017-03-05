@@ -18,8 +18,18 @@ def convert_rules(old_object):
                 new_rule = {raw_rule[rule_index+0]: {"$in": raw_rule[rule_index+2]}}
                 res.update(new_rule)
             elif operator == 'has':
-                new_rule = {raw_rule[rule_index+0]: {"$has": raw_rule[rule_index+2]}}
-                res.update(new_rule)
+                first_part = raw_rule[rule_index+0]
+                attributes = raw_rule[rule_index+2]
+
+                if isinstance(raw_rule[rule_index+2], list):
+                    while len(attributes) > 0:
+                        aux_attrib = attributes.pop(0)
+                        new_rule = {first_part + "." + aux_attrib: {"$exists": True}}
+                        res.update(new_rule)
+                elif isinstance(raw_rule[rule_index+2], unicode):
+                    single_rule = {first_part + "." + attributes: {"$exists": True}}
+                    res.update(single_rule)
+                    return res
             else:
                 raise RuntimeError("ERROR: Unrecognized operator:" + operator)
         return res 
@@ -51,7 +61,6 @@ if __name__ == '__main__':
 
     printer = pprint.PrettyPrinter()
     printer.format = safe_repr
-
 
     with open(sys.argv[1]) as f:
         for line in f:
