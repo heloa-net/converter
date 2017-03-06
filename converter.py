@@ -30,12 +30,13 @@ def convert_rules(old_object):
                         identifier = first_part + "." + attributes
                         match = raw_rule[rule_index+3]
                         if identifier == match:
-                            value = raw_rule[rule_index+5]
-                            compound_rule = {match: value}
-                            res.update(compound_rule)
+                            if isinstance(raw_rule[rule_index+5], bool):
+                                compound_rule = {match: {"type": "bool"}}
+                                res.update(compound_rule)
+                            else:
+                                raise RuntimeError("ERROR: Unrecognized compound has rule:" + raw_rule[rule_index+0] + " " + raw_rule[rule_index+1] + " " + raw_rule[rule_index+2] + " " + raw_rule[rule_index+3] + " " + raw_rule[rule_index+4] + " " + str(raw_rule[rule_index+5]))
                         else:
-                            raise RuntimeError("ERROR: Unrecognized compound has rule:" + raw_rule)
-                    elif len(raw_rule) == 3:
+                            raise RuntimeError("ERROR: Unrecognized compound has rule:" + raw_rule[rule_index+0] + " " + raw_rule[rule_index+1] + " " + raw_rule[rule_index+2] + " " + raw_rule[rule_index+3] + " " + raw_rule[rule_index+4] + " " + str(raw_rule[rule_index+5]))
                         single_rule = {first_part + "." + attributes: {"$exists": True}}
                         res.update(single_rule)
                     else:
