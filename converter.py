@@ -67,4 +67,4 @@ if __name__ == '__main__':
     with open(sys.argv[1]) as f:
         for line in f:
             json_obj = json.loads(line)
-            print(convert_rules(json_obj))
+            print(json.dumps(convert_rules(json_obj)))
