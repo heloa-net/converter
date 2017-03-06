@@ -27,12 +27,24 @@ def convert_rules(old_object):
                         new_rule = {first_part + "." + aux_attrib: {"$exists": True}}
                         res.update(new_rule)
                 elif isinstance(raw_rule[rule_index+2], unicode):
-                    single_rule = {first_part + "." + attributes: {"$exists": True}}
-                    res.update(single_rule)
+                    if len(raw_rule) == 6:
+                        identifier = first_part + "." + attributes
+                        match = raw_rule[rule_index+3]
+                        if identifier == match:
+                            value = raw_rule[rule_index+5]
+                            compound_rule = {match: value}
+                            res.update(compound_rule)
+                        else:
+                            raise RuntimeError("ERROR: Unrecognized compound has rule:" + raw_rule)
+                    elif len(raw_rule) == 3:
+                        single_rule = {first_part + "." + attributes: {"$exists": True}}
+                        res.update(single_rule)
+                    else:
+                        raise RuntimeError("ERROR: Unrecognized has rule pattern:" + raw_rule)
                     return res
             else:
                 raise RuntimeError("ERROR: Unrecognized operator:" + operator)
-        return res 
+        return res
 
     res = {}
     for obj_key, obj_val in old_object.iteritems():
