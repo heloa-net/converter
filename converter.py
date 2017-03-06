@@ -34,16 +34,19 @@ def convert_rules(old_object):
                                 compound_rule = {match: {"type": "bool"}}
                                 res.update(compound_rule)
                             else:
-                                raise RuntimeError("ERROR: Unrecognized compound has rule:" + raw_rule[rule_index+0] + " " + raw_rule[rule_index+1] + " " + raw_rule[rule_index+2] + " " + raw_rule[rule_index+3] + " " + raw_rule[rule_index+4] + " " + str(raw_rule[rule_index+5]))
+                                raise RuntimeError("ERROR: Unrecognized compound has rule:" + str(raw_rule))
                         else:
-                            raise RuntimeError("ERROR: Unrecognized compound has rule:" + raw_rule[rule_index+0] + " " + raw_rule[rule_index+1] + " " + raw_rule[rule_index+2] + " " + raw_rule[rule_index+3] + " " + raw_rule[rule_index+4] + " " + str(raw_rule[rule_index+5]))
+                            raise RuntimeError("ERROR: Unrecognized compound has rule:" + str(raw_rule))
                         single_rule = {first_part + "." + attributes: {"$exists": True}}
                         res.update(single_rule)
+                    elif len(raw_rule) == 3:
+                        new_rule = {first_part + "." + raw_rule[rule_index+2]: {"$exists": True}}
+                        res.update(new_rule)
                     else:
-                        raise RuntimeError("ERROR: Unrecognized has rule pattern:" + raw_rule)
+                        raise RuntimeError("ERROR: Unrecognized has rule pattern:" + str(raw_rule))
                     return res
             else:
-                raise RuntimeError("ERROR: Unrecognized operator:" + operator)
+                raise RuntimeError("ERROR: Unrecognized operator:" + str(operator))
         return res
 
     res = {}
