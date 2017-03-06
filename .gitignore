@@ -1,5 +1,4 @@
-
-# Created by https://www.gitignore.io/api/python,macos
+# Created by https://www.gitignore.io/api/macos,visualstudiocode,python
 
 ### macOS ###
 *.DS_Store
@@ -122,4 +121,11 @@ ENV/
 # Rope project settings
 .ropeproject
 
-# End of https://www.gitignore.io/api/python,macos
+### VisualStudioCode ###
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# End of https://www.gitignore.io/api/macos,visualstudiocode,python
