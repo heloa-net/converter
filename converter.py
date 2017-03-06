@@ -1,5 +1,4 @@
 import json
-import pprint
 import sys
 
 """
@@ -65,15 +64,6 @@ def convert_rules(old_object):
     return res
 
 if __name__ == '__main__':
-    def safe_repr(object, context, maxlevels, level):
-        typ = pprint._type(object)
-        if typ is unicode:
-            object = str(object)
-        return pprint._safe_repr(object, context, maxlevels, level)
-
-    printer = pprint.PrettyPrinter()
-    printer.format = safe_repr
-
     with open(sys.argv[1]) as f:
         for line in f:
             json_obj = json.loads(line)
