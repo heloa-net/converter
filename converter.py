@@ -41,8 +41,6 @@ def convert_rules(old_object):
                         
                         res.update(single_rule)
                     elif len(raw_rule) == 3:
-                        print "short unicode", str(raw_rule)
-                        # check if conversion is correct
                         new_rule = {first_part + "." + raw_rule[rule_index+2]: {"$exists": True}}
                         res.update(new_rule)
                     else:
@@ -88,7 +86,6 @@ def convert_rules(old_object):
         elif obj_val and len(obj_val) == 1:
             single_rule = obj_val[0]
             rule = decode_rule(single_rule)
-            # should be optimized?
             res[obj_key] = rule
         else:
             res[obj_key] = {}
