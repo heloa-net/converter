@@ -28,18 +28,21 @@ def convert_rules(old_object):
                 elif isinstance(raw_rule[rule_index+2], unicode):
                     if len(raw_rule) == 6:
                         identifier = first_part + "." + attributes
-                        match = raw_rule[rule_index+3]
-                        if identifier == match:
-                            if isinstance(raw_rule[rule_index+5], bool):
-                                compound_rule = {match: {"type": "bool"}}
-                                res.update(compound_rule)
+                        
+                        if identifier == raw_rule[rule_index+3]:
+                            second_operator = raw_rule[rule_index+4]
+                            
+                            if raw_rule[rule_index+4] == 'eq' and isinstance(raw_rule[rule_index+5], bool):
+                                single_rule = {identifier: raw_rule[rule_index+5]}
                             else:
-                                raise RuntimeError("ERROR: Unrecognized compound has rule:" + str(raw_rule))
+                                raise RuntimeError("ERROR: Unrecognized has rule:" + str(raw_rule))
                         else:
                             raise RuntimeError("ERROR: Unrecognized compound has rule:" + str(raw_rule))
-                        single_rule = {first_part + "." + attributes: {"$exists": True}}
+                        
                         res.update(single_rule)
                     elif len(raw_rule) == 3:
+                        print "short unicode", str(raw_rule)
+                        # check if conversion is correct
                         new_rule = {first_part + "." + raw_rule[rule_index+2]: {"$exists": True}}
                         res.update(new_rule)
                     else:
@@ -47,6 +50,29 @@ def convert_rules(old_object):
                     return res
             else:
                 raise RuntimeError("ERROR: Unrecognized operator:" + str(operator))
+        return res
+    
+    def optimize_rule(rule_obj):
+        res = []
+        aux = []
+        for index, item in enumerate(rule_obj):
+            val = item.values()
+            if isinstance(val[0], bool):
+                aux.insert(index, item)
+            else:
+                res.append(item)
+        while len(aux) > 0:
+            for index, item in enumerate(aux):
+                key = item.keys()
+                try:
+                    first = aux.index({key[0]: False})
+                    second = aux.index({key[0]: True})
+                    res.append({key[0]: {"$type": "bool"}})
+                    aux.__delitem__(first)
+                    aux.__delitem__(second)
+                except ValueError:
+                    res.append(item)
+                    aux.remove(item)
         return res
 
     res = {}
@@ -57,10 +83,12 @@ def convert_rules(old_object):
             for obj_rule in obj_val:
                 rule = decode_rule(obj_rule)
                 or_obj.append(rule)
-            res[obj_key] = {"$or": or_obj}
+            optimized_obj = optimize_rule(or_obj)
+            res[obj_key] = {"$or": optimized_obj}
         elif obj_val and len(obj_val) == 1:
             single_rule = obj_val[0]
             rule = decode_rule(single_rule)
+            # should be optimized?
             res[obj_key] = rule
         else:
             res[obj_key] = {}
